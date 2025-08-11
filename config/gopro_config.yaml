@@ -1,68 +1,78 @@
-gopro_node:
-  ros__parameters:
-    connection_type: "wireless"  # or "wired"
-    fps: 30
-    udp_port: 8554
-    camera_serial: null
-    frame_id: "gopro_frame"
-    resolution: "1080p"
-    hypersmooth: null           # e.g. "on", "off", "high"
-    lens: null                  # e.g. "wide", "linear", "narrow"
-    bitrate: null               # e.g. 45000000
-    white_balance: null         # e.g. 5500
-    iso_min: null               # e.g. 100
-    iso_max: null               # e.g. 1600
-    shutter: null               # e.g. "auto", "1/60"
-    ev_comp: null               # e.g. 0, -1, 1
-    color: null                 # e.g. "GoPro", "Flat"
-    sharpness: null             # e.g. "high", "medium", "low"
-    audio_mode: null            # e.g. "stereo", "wind"
-    exposure_control: null
-    zoom: null
-    digital_lens: null
-    media_mod: null
-    protune: null
-    spot_meter: null
-    auto_low_light: null
-    hdr: null
-    raw_audio: null
-    wind_noise_reduction: null
-    mic_input: null
-    gps: null
-    leds: null
-    beeps: null
-    auto_off: null
-    date_time: null
-    orientation: null
-    looping: null
-    interval: null
-    night_lapse: null
-    night_lapse_exposure: null
-    burst_rate: null
-    photo_resolution: null
-    photo_mode: null
-    timelapse_interval: null
-    timelapse_resolution: null
-    timelapse_mode: null
-    timelapse_speed: null
-    timelapse_auto_interval: null
-    timelapse_auto_shutter: null
-    timelapse_auto_exposure: null
-    timelapse_auto_iso: null
-    timelapse_auto_white_balance: null
-    timelapse_auto_ev_comp: null
-    timelapse_auto_color: null
-    timelapse_auto_sharpness: null
-    timelapse_auto_audio: null
-    timelapse_auto_gps: null
-    timelapse_auto_leds: null
-    timelapse_auto_beeps: null
-    timelapse_auto_auto_off: null
-    timelapse_auto_date_time: null
-    timelapse_auto_orientation: null
-    timelapse_auto_looping: null
-    timelapse_auto_night_lapse: null
-    timelapse_auto_night_lapse_exposure: null
-    timelapse_auto_burst_rate: null
-    timelapse_auto_photo_resolution: null
-    timelapse_auto_photo_mode: null
+# gopro_config.yaml
+
+camera_name: "gopro_camera"
+camera_namespace: "gopro"
+serial_no: "12345678"
+frame_id: "gopro_link"
+log_level: "INFO"
+enable_rgb: true
+enable_depth: false
+
+# gopro_node:
+#   ros__parameters:
+#     connection_type: "wireless"  # or "wired"
+#     fps: 30
+#     udp_port: 8554
+#     camera_serial: null
+#     frame_id: "gopro_frame"
+#     resolution: "1080p"
+#     hypersmooth: null           # e.g. "on", "off", "high"
+#     lens: null                  # e.g. "wide", "linear", "narrow"
+#     bitrate: null               # e.g. 45000000
+#     white_balance: null         # e.g. 5500
+#     iso_min: null               # e.g. 100
+#     iso_max: null               # e.g. 1600
+#     shutter: null               # e.g. "auto", "1/60"
+#     ev_comp: null               # e.g. 0, -1, 1
+#     color: null                 # e.g. "GoPro", "Flat"
+#     sharpness: null             # e.g. "high", "medium", "low"
+#     audio_mode: null            # e.g. "stereo", "wind"
+#     exposure_control: null
+#     zoom: null
+#     digital_lens: null
+#     media_mod: null
+#     protune: null
+#     spot_meter: null
+#     auto_low_light: null
+#     hdr: null
+#     raw_audio: null
+#     wind_noise_reduction: null
+#     mic_input: null
+#     gps: null
+#     leds: null
+#     beeps: null
+#     auto_off: null
+#     date_time: null
+#     orientation: null
+#     looping: null
+#     interval: null
+#     night_lapse: null
+#     night_lapse_exposure: null
+#     burst_rate: null
+#     photo_resolution: null
+#     photo_mode: null
+#     timelapse_interval: null
+#     timelapse_resolution: null
+#     timelapse_mode: null
+#     timelapse_speed: null
+#     timelapse_auto_interval: null
+#     timelapse_auto_shutter: null
+#     timelapse_auto_exposure: null
+#     timelapse_auto_iso: null
+#     timelapse_auto_white_balance: null
+#     timelapse_auto_ev_comp: null
+#     timelapse_auto_color: null
+#     timelapse_auto_sharpness: null
+#     timelapse_auto_audio: null
+#     timelapse_auto_gps: null
+#     timelapse_auto_leds: null
+#     timelapse_auto_beeps: null
+#     timelapse_auto_auto_off: null
+#     timelapse_auto_date_time: null
+#     timelapse_auto_orientation: null
+#     timelapse_auto_looping: null
+#     timelapse_auto_night_lapse: null
+#     timelapse_auto_night_lapse_exposure: null
+#     timelapse_auto_burst_rate: null
+#     timelapse_auto_photo_resolution: null
+#     timelapse_auto_photo_mode: null

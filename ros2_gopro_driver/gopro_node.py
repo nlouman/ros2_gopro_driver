@@ -3,6 +3,7 @@ import asyncio
 import cv2
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, QoSHistoryPolicy, QoSReliabilityPolicy
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from open_gopro import WirelessGoPro, WiredGoPro, constants
@@ -14,146 +15,150 @@ class GoProPublisher(Node):
         super().__init__('gopro_node')
 
         # Load parameters from configuration file
-        self.declare_parameter('connection_type', 'wireless')
+        self.declare_parameter('connection_type', 'auto')
         self.declare_parameter('fps', 30)
         self.declare_parameter('udp_port', 8554)
         self.declare_parameter('camera_serial', None)
         self.declare_parameter('frame_id', 'gopro_frame')
-        self.declare_parameter('resolution', '1080p')
-        self.declare_parameter('hypersmooth', None)
-        self.declare_parameter('lens', None)
-        self.declare_parameter('bitrate', None)
-        self.declare_parameter('white_balance', None)
-        self.declare_parameter('iso_min', None)
-        self.declare_parameter('iso_max', None)
-        self.declare_parameter('shutter', None)
-        self.declare_parameter('ev_comp', None)
-        self.declare_parameter('color', None)
-        self.declare_parameter('sharpness', None)
-        self.declare_parameter('audio_mode', None)
-        self.declare_parameter('exposure_control', None)
-        self.declare_parameter('zoom', None)
-        self.declare_parameter('digital_lens', None)
-        self.declare_parameter('media_mod', None)
-        self.declare_parameter('protune', None)
-        self.declare_parameter('spot_meter', None)
-        self.declare_parameter('auto_low_light', None)
-        self.declare_parameter('hdr', None)
-        self.declare_parameter('raw_audio', None)
-        self.declare_parameter('wind_noise_reduction', None)
-        self.declare_parameter('mic_input', None)
-        self.declare_parameter('gps', None)
-        self.declare_parameter('leds', None)
-        self.declare_parameter('beeps', None)
-        self.declare_parameter('auto_off', None)
-        self.declare_parameter('date_time', None)
-        self.declare_parameter('orientation', None)
-        self.declare_parameter('looping', None)
-        self.declare_parameter('interval', None)
-        self.declare_parameter('night_lapse', None)
-        self.declare_parameter('night_lapse_exposure', None)
-        self.declare_parameter('burst_rate', None)
-        self.declare_parameter('photo_resolution', None)
-        self.declare_parameter('photo_mode', None)
-        self.declare_parameter('timelapse_interval', None)
-        self.declare_parameter('timelapse_resolution', None)
-        self.declare_parameter('timelapse_mode', None)
-        self.declare_parameter('timelapse_speed', None)
-        self.declare_parameter('timelapse_auto_interval', None)
-        self.declare_parameter('timelapse_auto_shutter', None)
-        self.declare_parameter('timelapse_auto_exposure', None)
-        self.declare_parameter('timelapse_auto_iso', None)
-        self.declare_parameter('timelapse_auto_white_balance', None)
-        self.declare_parameter('timelapse_auto_ev_comp', None)
-        self.declare_parameter('timelapse_auto_color', None)
-        self.declare_parameter('timelapse_auto_sharpness', None)
-        self.declare_parameter('timelapse_auto_audio', None)
-        self.declare_parameter('timelapse_auto_gps', None)
-        self.declare_parameter('timelapse_auto_leds', None)
-        self.declare_parameter('timelapse_auto_beeps', None)
-        self.declare_parameter('timelapse_auto_auto_off', None)
-        self.declare_parameter('timelapse_auto_date_time', None)
-        self.declare_parameter('timelapse_auto_orientation', None)
-        self.declare_parameter('timelapse_auto_looping', None)
-        self.declare_parameter('timelapse_auto_interval', None)
-        self.declare_parameter('timelapse_auto_night_lapse', None)
-        self.declare_parameter('timelapse_auto_night_lapse_exposure', None)
-        self.declare_parameter('timelapse_auto_burst_rate', None)
-        self.declare_parameter('timelapse_auto_photo_resolution', None)
-        self.declare_parameter('timelapse_auto_photo_mode', None)
+        # self.declare_parameter('resolution', '1080p')
+        # self.declare_parameter('hypersmooth', None)
+        # self.declare_parameter('lens', None)
+        # self.declare_parameter('bitrate', None)
+        # self.declare_parameter('white_balance', None)
+        # self.declare_parameter('iso_min', None)
+        # self.declare_parameter('iso_max', None)
+        # self.declare_parameter('shutter', None)
+        # self.declare_parameter('ev_comp', None)
+        # self.declare_parameter('color', None)
+        # self.declare_parameter('sharpness', None)
+        # self.declare_parameter('audio_mode', None)
+        # self.declare_parameter('exposure_control', None)
+        # self.declare_parameter('zoom', None)
+        # self.declare_parameter('digital_lens', None)
+        # self.declare_parameter('media_mod', None)
+        # self.declare_parameter('protune', None)
+        # self.declare_parameter('spot_meter', None)
+        # self.declare_parameter('auto_low_light', None)
+        # self.declare_parameter('hdr', None)
+        # self.declare_parameter('raw_audio', None)
+        # self.declare_parameter('wind_noise_reduction', None)
+        # self.declare_parameter('mic_input', None)
+        # self.declare_parameter('gps', None)
+        # self.declare_parameter('leds', None)
+        # self.declare_parameter('beeps', None)
+        # self.declare_parameter('auto_off', None)
+        # self.declare_parameter('date_time', None)
+        # self.declare_parameter('orientation', None)
+        # self.declare_parameter('looping', None)
+        # self.declare_parameter('interval', None)
+        # self.declare_parameter('night_lapse', None)
+        # self.declare_parameter('night_lapse_exposure', None)
+        # self.declare_parameter('burst_rate', None)
+        # self.declare_parameter('photo_resolution', None)
+        # self.declare_parameter('photo_mode', None)
+        # self.declare_parameter('timelapse_interval', None)
+        # self.declare_parameter('timelapse_resolution', None)
+        # self.declare_parameter('timelapse_mode', None)
+        # self.declare_parameter('timelapse_speed', None)
+        # self.declare_parameter('timelapse_auto_interval', None)
+        # self.declare_parameter('timelapse_auto_shutter', None)
+        # self.declare_parameter('timelapse_auto_exposure', None)
+        # self.declare_parameter('timelapse_auto_iso', None)
+        # self.declare_parameter('timelapse_auto_white_balance', None)
+        # self.declare_parameter('timelapse_auto_ev_comp', None)
+        # self.declare_parameter('timelapse_auto_color', None)
+        # self.declare_parameter('timelapse_auto_sharpness', None)
+        # self.declare_parameter('timelapse_auto_audio', None)
+        # self.declare_parameter('timelapse_auto_gps', None)
+        # self.declare_parameter('timelapse_auto_leds', None)
+        # self.declare_parameter('timelapse_auto_beeps', None)
+        # self.declare_parameter('timelapse_auto_auto_off', None)
+        # self.declare_parameter('timelapse_auto_date_time', None)
+        # self.declare_parameter('timelapse_auto_orientation', None)
+        # self.declare_parameter('timelapse_auto_looping', None)
+        # self.declare_parameter('timelapse_auto_interval', None)
+        # self.declare_parameter('timelapse_auto_night_lapse', None)
+        # self.declare_parameter('timelapse_auto_night_lapse_exposure', None)
+        # self.declare_parameter('timelapse_auto_burst_rate', None)
+        # self.declare_parameter('timelapse_auto_photo_resolution', None)
+        # self.declare_parameter('timelapse_auto_photo_mode', None)
 
         self.fps = self.get_parameter('fps').value
         self.udp_port = self.get_parameter('udp_port').value
         self.camera_serial = self.get_parameter('camera_serial').value
         self.frame_id = self.get_parameter('frame_id').value
         self.connection_type = self.get_parameter('connection_type').value
-        self.resolution = self.get_parameter('resolution').value
-        self.hypersmooth = self.get_parameter('hypersmooth').value
-        self.lens = self.get_parameter('lens').value
-        self.bitrate = self.get_parameter('bitrate').value
-        self.white_balance = self.get_parameter('white_balance').value
-        self.iso_min = self.get_parameter('iso_min').value
-        self.iso_max = self.get_parameter('iso_max').value
-        self.shutter = self.get_parameter('shutter').value
-        self.ev_comp = self.get_parameter('ev_comp').value
-        self.color = self.get_parameter('color').value
-        self.sharpness = self.get_parameter('sharpness').value
-        self.audio_mode = self.get_parameter('audio_mode').value
-        self.exposure_control = self.get_parameter('exposure_control').value
-        self.zoom = self.get_parameter('zoom').value
-        self.digital_lens = self.get_parameter('digital_lens').value
-        self.media_mod = self.get_parameter('media_mod').value
-        self.protune = self.get_parameter('protune').value
-        self.spot_meter = self.get_parameter('spot_meter').value
-        self.auto_low_light = self.get_parameter('auto_low_light').value
-        self.hdr = self.get_parameter('hdr').value
-        self.raw_audio = self.get_parameter('raw_audio').value
-        self.wind_noise_reduction = self.get_parameter('wind_noise_reduction').value
-        self.mic_input = self.get_parameter('mic_input').value
-        self.gps = self.get_parameter('gps').value
-        self.leds = self.get_parameter('leds').value
-        self.beeps = self.get_parameter('beeps').value
-        self.auto_off = self.get_parameter('auto_off').value
-        self.date_time = self.get_parameter('date_time').value
-        self.orientation = self.get_parameter('orientation').value
-        self.looping = self.get_parameter('looping').value
-        self.interval = self.get_parameter('interval').value
-        self.night_lapse = self.get_parameter('night_lapse').value
-        self.night_lapse_exposure = self.get_parameter('night_lapse_exposure').value
-        self.burst_rate = self.get_parameter('burst_rate').value
-        self.photo_resolution = self.get_parameter('photo_resolution').value
-        self.photo_mode = self.get_parameter('photo_mode').value
-        self.timelapse_interval = self.get_parameter('timelapse_interval').value
-        self.timelapse_resolution = self.get_parameter('timelapse_resolution').value
-        self.timelapse_mode = self.get_parameter('timelapse_mode').value
-        self.timelapse_speed = self.get_parameter('timelapse_speed').value
-        self.timelapse_auto_interval = self.get_parameter('timelapse_auto_interval').value
-        self.timelapse_auto_shutter = self.get_parameter('timelapse_auto_shutter').value
-        self.timelapse_auto_exposure = self.get_parameter('timelapse_auto_exposure').value
-        self.timelapse_auto_iso = self.get_parameter('timelapse_auto_iso').value
-        self.timelapse_auto_white_balance = self.get_parameter('timelapse_auto_white_balance').value
-        self.timelapse_auto_ev_comp = self.get_parameter('timelapse_auto_ev_comp').value
-        self.timelapse_auto_color = self.get_parameter('timelapse_auto_color').value
-        self.timelapse_auto_sharpness = self.get_parameter('timelapse_auto_sharpness').value
-        self.timelapse_auto_audio = self.get_parameter('timelapse_auto_audio').value
-        self.timelapse_auto_gps = self.get_parameter('timelapse_auto_gps').value
-        self.timelapse_auto_leds = self.get_parameter('timelapse_auto_leds').value
-        self.timelapse_auto_beeps = self.get_parameter('timelapse_auto_beeps').value
-        self.timelapse_auto_auto_off = self.get_parameter('timelapse_auto_auto_off').value
-        self.timelapse_auto_date_time = self.get_parameter('timelapse_auto_date_time').value
-        self.timelapse_auto_orientation = self.get_parameter('timelapse_auto_orientation').value
-        self.timelapse_auto_looping = self.get_parameter('timelapse_auto_looping').value
-        self.timelapse_auto_interval = self.get_parameter('timelapse_auto_interval').value
-        self.timelapse_auto_night_lapse = self.get_parameter('timelapse_auto_night_lapse').value
-        self.timelapse_auto_night_lapse_exposure = self.get_parameter('timelapse_auto_night_lapse_exposure').value
-        self.timelapse_auto_burst_rate = self.get_parameter('timelapse_auto_burst_rate').value
-        self.timelapse_auto_photo_resolution = self.get_parameter('timelapse_auto_photo_resolution').value
-        self.timelapse_auto_photo_mode = self.get_parameter('timelapse_auto_photo_mode').value
+        # self.resolution = self.get_parameter('resolution').value
+        # self.hypersmooth = self.get_parameter('hypersmooth').value
+        # self.lens = self.get_parameter('lens').value
+        # self.bitrate = self.get_parameter('bitrate').value
+        # self.white_balance = self.get_parameter('white_balance').value
+        # self.iso_min = self.get_parameter('iso_min').value
+        # self.iso_max = self.get_parameter('iso_max').value
+        # self.shutter = self.get_parameter('shutter').value
+        # self.ev_comp = self.get_parameter('ev_comp').value
+        # self.color = self.get_parameter('color').value
+        # self.sharpness = self.get_parameter('sharpness').value
+        # self.audio_mode = self.get_parameter('audio_mode').value
+        # self.exposure_control = self.get_parameter('exposure_control').value
+        # self.zoom = self.get_parameter('zoom').value
+        # self.digital_lens = self.get_parameter('digital_lens').value
+        # self.media_mod = self.get_parameter('media_mod').value
+        # self.protune = self.get_parameter('protune').value
+        # self.spot_meter = self.get_parameter('spot_meter').value
+        # self.auto_low_light = self.get_parameter('auto_low_light').value
+        # self.hdr = self.get_parameter('hdr').value
+        # self.raw_audio = self.get_parameter('raw_audio').value
+        # self.wind_noise_reduction = self.get_parameter('wind_noise_reduction').value
+        # self.mic_input = self.get_parameter('mic_input').value
+        # self.gps = self.get_parameter('gps').value
+        # self.leds = self.get_parameter('leds').value
+        # self.beeps = self.get_parameter('beeps').value
+        # self.auto_off = self.get_parameter('auto_off').value
+        # self.date_time = self.get_parameter('date_time').value
+        # self.orientation = self.get_parameter('orientation').value
+        # self.looping = self.get_parameter('looping').value
+        # self.interval = self.get_parameter('interval').value
+        # self.night_lapse = self.get_parameter('night_lapse').value
+        # self.night_lapse_exposure = self.get_parameter('night_lapse_exposure').value
+        # self.burst_rate = self.get_parameter('burst_rate').value
+        # self.photo_resolution = self.get_parameter('photo_resolution').value
+        # self.photo_mode = self.get_parameter('photo_mode').value
+        # self.timelapse_interval = self.get_parameter('timelapse_interval').value
+        # self.timelapse_resolution = self.get_parameter('timelapse_resolution').value
+        # self.timelapse_mode = self.get_parameter('timelapse_mode').value
+        # self.timelapse_speed = self.get_parameter('timelapse_speed').value
+        # self.timelapse_auto_interval = self.get_parameter('timelapse_auto_interval').value
+        # self.timelapse_auto_shutter = self.get_parameter('timelapse_auto_shutter').value
+        # self.timelapse_auto_exposure = self.get_parameter('timelapse_auto_exposure').value
+        # self.timelapse_auto_iso = self.get_parameter('timelapse_auto_iso').value
+        # self.timelapse_auto_white_balance = self.get_parameter('timelapse_auto_white_balance').value
+        # self.timelapse_auto_ev_comp = self.get_parameter('timelapse_auto_ev_comp').value
+        # self.timelapse_auto_color = self.get_parameter('timelapse_auto_color').value
+        # self.timelapse_auto_sharpness = self.get_parameter('timelapse_auto_sharpness').value
+        # self.timelapse_auto_audio = self.get_parameter('timelapse_auto_audio').value
+        # self.timelapse_auto_gps = self.get_parameter('timelapse_auto_gps').value
+        # self.timelapse_auto_leds = self.get_parameter('timelapse_auto_leds').value
+        # self.timelapse_auto_beeps = self.get_parameter('timelapse_auto_beeps').value
+        # self.timelapse_auto_auto_off = self.get_parameter('timelapse_auto_auto_off').value
+        # self.timelapse_auto_date_time = self.get_parameter('timelapse_auto_date_time').value
+        # self.timelapse_auto_orientation = self.get_parameter('timelapse_auto_orientation').value
+        # self.timelapse_auto_looping = self.get_parameter('timelapse_auto_looping').value
+        # self.timelapse_auto_interval = self.get_parameter('timelapse_auto_interval').value
+        # self.timelapse_auto_night_lapse = self.get_parameter('timelapse_auto_night_lapse').value
+        # self.timelapse_auto_night_lapse_exposure = self.get_parameter('timelapse_auto_night_lapse_exposure').value
+        # self.timelapse_auto_burst_rate = self.get_parameter('timelapse_auto_burst_rate').value
+        # self.timelapse_auto_photo_resolution = self.get_parameter('timelapse_auto_photo_resolution').value
+        # self.timelapse_auto_photo_mode = self.get_parameter('timelapse_auto_photo_mode').value
 
         # --- Publisher for image ---
         self._bridge = CvBridge()
-        qos_profile = rclpy.qos.QoSProfile(depth=5)
-        qos_profile.best_effort()
+        # Create a QoS profile with best-effort reliability
+        qos_profile = QoSProfile(
+            history=QoSHistoryPolicy.KEEP_LAST,
+            depth=5,
+            reliability=QoSReliabilityPolicy.BEST_EFFORT
+        )
         self.image_pub = self.create_publisher(Image, 'image_raw', qos_profile)
 
         # --- Thread-safe queue for raw CV frames ---
@@ -178,6 +183,16 @@ class GoProPublisher(Node):
             await self._connect_wireless()
         elif self.connection_type == 'wired':
             await self._connect_wired()
+        elif self.connection_type == 'auto':
+            # Try wired first, then wireless if wired fails
+            try:
+                await self._connect_wired()
+            except Exception as wired_exc:
+                self.get_logger().warn(f"Wired connection failed: {wired_exc}. Trying wireless...")
+                try:
+                    await self._connect_wireless()
+                except Exception as wireless_exc:
+                    self.get_logger().error(f"Wireless connection failed: {wireless_exc}")
         else:
             self.get_logger().error('Invalid connection type specified.')
 
@@ -422,10 +437,24 @@ class GoProPublisher(Node):
         return rclpy.parameter.SetParametersResult(successful=True)
 
     # In _connect_wireless and _connect_wired, store the gopro object for dynamic updates
+    async def _connect(self):
+        connection_type = self.connection_type
+        gopro = WirelessGoPro if connection_type == 'wireless' else WiredGoPro
+        try:
+            await gopro.open()
+        except:
+            if connection_type == 'wireless': 
+                self.get_logger().error('Failed to open GoPro in wireless mode.')
+            else:
+                self.get_logger().warn('Wired connection failed. Trying via wireless...')
+                gopro = WirelessGoPro()
+                
     async def _connect_wireless(self):
         async with WirelessGoPro(identifier=self.camera_serial) as gopro:
             self._active_gopro = gopro
             self.get_logger().info('Connected to GoPro (Wireless)')
+            # DEBUG: Test connection only, skip video streaming for now
+            self.get_logger().info('DEBUG: Skipping video streaming and settings application for wireless connection.')
             await self._apply_gopro_settings(gopro)
             preview_req = await gopro.http_command.start_preview()
             port = preview_req.data.udp_port
@@ -436,11 +465,19 @@ class GoProPublisher(Node):
         async with WiredGoPro(identifier=self.camera_serial) as gopro:
             self._active_gopro = gopro
             self.get_logger().info('Connected to GoPro (Wired)')
-            await self._apply_gopro_settings(gopro)
-            preview_req = await gopro.http_command.start_preview()
-            port = preview_req.data.udp_port
-            cap = cv2.VideoCapture(f"udp://127.0.0.1:{port}", cv2.CAP_FOURCC(*'H264'))
-            await self._stream_frames(cap, gopro)
+            # await self._apply_gopro_settings(gopro)
+            # preview_req = await gopro.http_command.start_preview()
+            # port = preview_req.data.udp_port
+            # cap = cv2.VideoCapture(f"udp://127.0.0.1:{port}", cv2.CAP_FOURCC(*'H264'))
+            # await self._stream_frames(cap, gopro)
+
+    async def _open_stream(self):
+        await self._apply_gopro_settings(self._active_gopro)
+        preview_req = await self._active_gopro
+        port = preview_req.data.udp_port
+        cap = cv2.VideoCapture(f"udp://127.0.0.1:{port}", cv2.CAP_FOURCC(*'H264'))
+        await self._stream_frames(cap, self._active_gopro)
+
 
     async def _stream_frames(self, cap, gopro):
         if not cap.isOpened():
